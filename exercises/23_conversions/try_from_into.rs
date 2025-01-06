@@ -23,27 +23,45 @@ enum IntoColorError {
     IntConversion,
 }
 
-// TODO: Tuple implementation.
-// Correct RGB color values must be integers in the 0..=255 range.
+// Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
 
-    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {}
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        let (r, g, b) = tuple;
+        let red = u8::try_from(r).map_err(|_| IntoColorError::IntConversion)?;
+        let green = u8::try_from(g).map_err(|_| IntoColorError::IntConversion)?;
+        let blue = u8::try_from(b).map_err(|_| IntoColorError::IntConversion)?;
+        Ok(Color { red, green, blue })
+    }
 }
 
-// TODO: Array implementation.
+// Array implementation
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
 
-    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {}
+    fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let [r, g, b] = arr;
+        let red = u8::try_from(r).map_err(|_| IntoColorError::IntConversion)?;
+        let green = u8::try_from(g).map_err(|_| IntoColorError::IntConversion)?;
+        let blue = u8::try_from(b).map_err(|_| IntoColorError::IntConversion)?;
+        Ok(Color { red, green, blue })
+    }
 }
 
-// TODO: Slice implementation.
-// This implementation needs to check the slice length.
+// Slice implementation
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
 
-    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {}
+    fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+        let red = u8::try_from(slice[0]).map_err(|_| IntoColorError::IntConversion)?;
+        let green = u8::try_from(slice[1]).map_err(|_| IntoColorError::IntConversion)?;
+        let blue = u8::try_from(slice[2]).map_err(|_| IntoColorError::IntConversion)?;
+        Ok(Color { red, green, blue })
+    }
 }
 
 fn main() {
